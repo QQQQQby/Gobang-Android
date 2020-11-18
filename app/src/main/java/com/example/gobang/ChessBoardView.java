@@ -5,11 +5,15 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-public class ChessBoardView extends View {
+public class ChessBoardView extends View implements View.OnTouchListener {
+
+    private static final int BLOCK_WIDTH = 45, BLOCK_HEIGHT = 45;
 
     private final Paint paint;
     private int row, col;
@@ -31,34 +35,24 @@ public class ChessBoardView extends View {
         ta.recycle();
         //initialize
         paint = new Paint();
+        setOnTouchListener(this);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        switch (widthMode) {
-            case MeasureSpec.EXACTLY:
-                width = widthSize / col;
-                break;
-            case MeasureSpec.AT_MOST:
-            case MeasureSpec.UNSPECIFIED:
-                width = 45 * col;
-                break;
-        }
-        switch (heightMode) {
-            case MeasureSpec.EXACTLY:
-                height = heightSize / col;
-                break;
-            case MeasureSpec.AT_MOST:
-            case MeasureSpec.UNSPECIFIED:
-                height = 45 * row;
-                break;
-        }
+        width = BLOCK_WIDTH * col;
+        height = BLOCK_HEIGHT * row;
         setMeasuredDimension(width, height);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        float x = motionEvent.getX(), y = motionEvent.getY();
+        if (x < 0 || y < 0 || x >= width || y >= height)
+            return true;
+        Log.d("haha", x+","+y);
+        return true;
     }
 
 //    @Override
