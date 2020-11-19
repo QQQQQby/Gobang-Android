@@ -13,11 +13,16 @@ import androidx.annotation.Nullable;
 
 public class ChessBoardView extends View implements View.OnTouchListener {
 
-    private static final int BLOCK_WIDTH = 45, BLOCK_HEIGHT = 45;
+    private static final int DEFAULT_BLOCK_WIDTH = 50, DEFAULT_BLOCK_HEIGHT = 50;
+    private static final int DEFAULT_ROW = 15, DEFAULT_COLUMN = 15;
+    private static final int DEFAULT_LINE_WIDTH = 5;
 
     private final Paint paint;
+    private int blockWidth, blockHeight;
     private int row, col;
+    private int lineWidth;
     private int width, height;
+    private int paddingLeft, paddingRight, paddingTop, paddingBottom;
 
     public ChessBoardView(Context context) {
         this(context, null, 0);
@@ -30,19 +35,28 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     public ChessBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ChessBoardView);
-        row = ta.getInteger(R.styleable.ChessBoardView_row, 15);
-        col = ta.getInteger(R.styleable.ChessBoardView_col, 15);
+        row = ta.getInteger(R.styleable.ChessBoardView_row, DEFAULT_ROW);
+        col = ta.getInteger(R.styleable.ChessBoardView_col, DEFAULT_COLUMN);
+        blockWidth = ta.getInteger(R.styleable.ChessBoardView_block_width, DEFAULT_BLOCK_WIDTH);
+        blockHeight = ta.getInteger(R.styleable.ChessBoardView_block_height, DEFAULT_BLOCK_HEIGHT);
+        lineWidth = ta.getInteger(R.styleable.ChessBoardView_line_width, DEFAULT_LINE_WIDTH);
         ta.recycle();
-        //initialize
+
+        paddingLeft = getPaddingLeft();
+        paddingRight = getPaddingRight();
+        paddingTop = getPaddingTop();
+        paddingBottom = getPaddingBottom();
+
         paint = new Paint();
+        paint.setStrokeWidth(lineWidth);
         setOnTouchListener(this);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = BLOCK_WIDTH * col;
-        height = BLOCK_HEIGHT * row;
+        width = blockWidth * (col - 1) + paddingLeft + paddingRight;
+        height = blockHeight * (row - 1) + paddingTop + paddingBottom;
         setMeasuredDimension(width, height);
     }
 
@@ -51,13 +65,24 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         float x = motionEvent.getX(), y = motionEvent.getY();
         if (x < 0 || y < 0 || x >= width || y >= height)
             return true;
-        Log.d("haha", x+","+y);
+        Log.d("haha", x + "," + y);
         return true;
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//        canvas.drawText();
-//    }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        int x = paddingLeft;
+        for (int i = 0; i < col; i++) {
+            canvas.drawLine(x, paddingTop, x, height - paddingBottom, paint);
+            x += blockWidth;
+        }
+        int y = paddingTop;
+        for (int i = 0; i < row; i++) {
+            canvas.drawLine(paddingLeft, y, width - paddingRight, y, paint);
+            y += blockHeight;
+        }
+
+
+    }
 }
