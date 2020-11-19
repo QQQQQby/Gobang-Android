@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 public class ChessBoardView extends View implements View.OnTouchListener {
 
     private static final int DEFAULT_BLOCK_WIDTH = 50, DEFAULT_BLOCK_HEIGHT = 50;
+    private static final int DEFAULT_PIECE_SIZE = 30;
     private static final int DEFAULT_ROW = 15, DEFAULT_COLUMN = 15;
     private static final int DEFAULT_LINE_WIDTH = 5;
 
@@ -21,8 +23,10 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     private int blockWidth, blockHeight;
     private int row, col;
     private int lineWidth;
+    private int piece_size;
     private int width, height;
     private int paddingLeft, paddingRight, paddingTop, paddingBottom;
+    List<>
 
     public ChessBoardView(Context context) {
         this(context, null, 0);
@@ -40,6 +44,7 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         blockWidth = ta.getInteger(R.styleable.ChessBoardView_block_width, DEFAULT_BLOCK_WIDTH);
         blockHeight = ta.getInteger(R.styleable.ChessBoardView_block_height, DEFAULT_BLOCK_HEIGHT);
         lineWidth = ta.getInteger(R.styleable.ChessBoardView_line_width, DEFAULT_LINE_WIDTH);
+        piece_size = ta.getInteger(R.styleable.ChessBoardView_piece_size, DEFAULT_PIECE_SIZE);
         ta.recycle();
 
         paddingLeft = getPaddingLeft();
@@ -48,7 +53,6 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         paddingBottom = getPaddingBottom();
 
         paint = new Paint();
-        paint.setStrokeWidth(lineWidth);
         setOnTouchListener(this);
     }
 
@@ -66,12 +70,15 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         if (x < 0 || y < 0 || x >= width || y >= height)
             return true;
         Log.d("haha", x + "," + y);
+        this.postInvalidate();
         return true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        paint.setStrokeWidth(lineWidth);
         int x = paddingLeft;
         for (int i = 0; i < col; i++) {
             canvas.drawLine(x, paddingTop, x, height - paddingBottom, paint);
@@ -83,6 +90,9 @@ public class ChessBoardView extends View implements View.OnTouchListener {
             y += blockHeight;
         }
 
+        paint.setStrokeWidth(1);
 
     }
+
+
 }
