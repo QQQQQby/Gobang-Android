@@ -1,21 +1,24 @@
-package com.example.gobang;
+package com.example.gobang.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.gobang.R;
+import com.example.gobang.model.Piece;
+
 public class ChessBoardView extends View implements View.OnTouchListener {
 
     private static final int DEFAULT_BLOCK_WIDTH = 50, DEFAULT_BLOCK_HEIGHT = 50;
-    private static final int DEFAULT_PIECE_SIZE = 30;
+    private static final int DEFAULT_PIECE_SIZE = 20;
     private static final int DEFAULT_ROW = 15, DEFAULT_COLUMN = 15;
     private static final int DEFAULT_LINE_WIDTH = 5;
 
@@ -26,7 +29,7 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     private int piece_size;
     private int width, height;
     private int paddingLeft, paddingRight, paddingTop, paddingBottom;
-    List<>
+    Piece[][] board;
 
     public ChessBoardView(Context context) {
         this(context, null, 0);
@@ -54,6 +57,14 @@ public class ChessBoardView extends View implements View.OnTouchListener {
 
         paint = new Paint();
         setOnTouchListener(this);
+
+        board = new Piece[row][col];
+        for (int i = 0; i < row; i++)
+            for (int j = 0; j < col; j++)
+                board[i][j] = Piece.EMPTY;
+//        setPiece(5, 5, Piece.BLACK);
+//        setPiece(5, 6, Piece.WHITE);
+//        setPiece(6, 6, Piece.BLACK);
     }
 
     @Override
@@ -78,7 +89,9 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        // Draw the board.
         paint.setStrokeWidth(lineWidth);
+        paint.setColor(Color.BLACK);
         int x = paddingLeft;
         for (int i = 0; i < col; i++) {
             canvas.drawLine(x, paddingTop, x, height - paddingBottom, paint);
@@ -90,9 +103,30 @@ public class ChessBoardView extends View implements View.OnTouchListener {
             y += blockHeight;
         }
 
+        // Draw pieces.
         paint.setStrokeWidth(1);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                switch (board[i][j]) {
+                    case BLACK:
+                        paint.setColor(Color.BLACK);
+                        canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, piece_size, paint);
+                        break;
+                    case WHITE:
+                        paint.setColor(Color.WHITE);
+                        canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, piece_size, paint);
+                        break;
+                    case EMPTY:
+                        break;
+                }
+            }
+        }
 
     }
 
+    public void setPiece(int i, int j, Piece piece) {
+        board[i][j] = piece;
+        this.postInvalidate();
+    }
 
 }

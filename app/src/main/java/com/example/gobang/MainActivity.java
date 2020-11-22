@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.gobang.view.ChessBoardView;
+
 public class MainActivity extends AppCompatActivity {
 
     ChessBoardView view;

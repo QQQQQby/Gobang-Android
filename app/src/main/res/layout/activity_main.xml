@@ -7,12 +7,11 @@
     tools:context=".MainActivity">
 
 
-    <com.example.gobang.ChessBoardView
+    <com.example.gobang.view.ChessBoardView
         android:id="@+id/chessBoard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorChessBoard"
-
         android:padding="20dp"/>
 
 </LinearLayout>
