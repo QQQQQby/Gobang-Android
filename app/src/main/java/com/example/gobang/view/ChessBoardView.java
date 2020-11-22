@@ -59,9 +59,6 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         setOnTouchListener(this);
 
         board = new Piece[row][col];
-        for (int i = 0; i < row; i++)
-            for (int j = 0; j < col; j++)
-                board[i][j] = Piece.EMPTY;
 //        setPiece(5, 5, Piece.BLACK);
 //        setPiece(5, 6, Piece.WHITE);
 //        setPiece(6, 6, Piece.BLACK);
@@ -78,6 +75,12 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         float x = motionEvent.getX(), y = motionEvent.getY();
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_UP:
+                Log.d("haha", "UP");
+            case MotionEvent.ACTION_DOWN:
+                Log.d("haha", "DOWN");
+        }
         if (x < 0 || y < 0 || x >= width || y >= height)
             return true;
         Log.d("haha", x + "," + y);
@@ -107,18 +110,17 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         paint.setStrokeWidth(1);
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
+                if (board[i][j] == null)
+                    continue;
                 switch (board[i][j]) {
                     case BLACK:
                         paint.setColor(Color.BLACK);
-                        canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, piece_size, paint);
                         break;
                     case WHITE:
                         paint.setColor(Color.WHITE);
-                        canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, piece_size, paint);
-                        break;
-                    case EMPTY:
                         break;
                 }
+                canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, piece_size, paint);
             }
         }
 
