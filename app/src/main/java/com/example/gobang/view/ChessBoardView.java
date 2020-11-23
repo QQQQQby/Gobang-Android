@@ -23,12 +23,12 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     private static final int DEFAULT_LINE_WIDTH = 5;
 
     private final Paint paint;
-    private int blockWidth, blockHeight;
-    private int row, col;
-    private int lineWidth;
-    private int piece_size;
-    private int width, height;
-    private int paddingLeft, paddingRight, paddingTop, paddingBottom;
+    private final int blockWidth, blockHeight;
+    private final int row, col;
+    private final int lineWidth, pieceRadius;
+    private final int width, height;
+    private final int paddingLeft, paddingRight, paddingTop, paddingBottom;
+    private int candidateC, candidateR;
     Piece[][] board;
 
     public ChessBoardView(Context context) {
@@ -47,44 +47,42 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         blockWidth = ta.getInteger(R.styleable.ChessBoardView_block_width, DEFAULT_BLOCK_WIDTH);
         blockHeight = ta.getInteger(R.styleable.ChessBoardView_block_height, DEFAULT_BLOCK_HEIGHT);
         lineWidth = ta.getInteger(R.styleable.ChessBoardView_line_width, DEFAULT_LINE_WIDTH);
-        piece_size = ta.getInteger(R.styleable.ChessBoardView_piece_size, DEFAULT_PIECE_SIZE);
+        pieceRadius = ta.getInteger(R.styleable.ChessBoardView_piece_radius, DEFAULT_PIECE_SIZE);
         ta.recycle();
 
         paddingLeft = getPaddingLeft();
         paddingRight = getPaddingRight();
         paddingTop = getPaddingTop();
         paddingBottom = getPaddingBottom();
+        width = blockWidth * (col - 1) + paddingLeft + paddingRight;
+        height = blockHeight * (row - 1) + paddingTop + paddingBottom;
 
         paint = new Paint();
-        setOnTouchListener(this);
-
         board = new Piece[row][col];
-//        setPiece(5, 5, Piece.BLACK);
-//        setPiece(5, 6, Piece.WHITE);
-//        setPiece(6, 6, Piece.BLACK);
+        candidateC = candidateR = -1;
+
+        setOnTouchListener(this);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = blockWidth * (col - 1) + paddingLeft + paddingRight;
-        height = blockHeight * (row - 1) + paddingTop + paddingBottom;
         setMeasuredDimension(width, height);
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        float x = motionEvent.getX(), y = motionEvent.getY();
+        int x = (int) motionEvent.getX(), y = (int) motionEvent.getY();
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_UP:
                 Log.d("haha", "UP");
             case MotionEvent.ACTION_DOWN:
                 Log.d("haha", "DOWN");
         }
-        if (x < 0 || y < 0 || x >= width || y >= height)
-            return true;
-        Log.d("haha", x + "," + y);
-        this.postInvalidate();
+//        if (x < 0 || y < 0 || x >= width || y >= height)
+//            return true;
+//        Log.d("haha", x + "," + y);
+        calculateCandidateCoordinate(x, y);
         return true;
     }
 
@@ -120,15 +118,50 @@ public class ChessBoardView extends View implements View.OnTouchListener {
                         paint.setColor(Color.WHITE);
                         break;
                 }
-                canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, piece_size, paint);
+                canvas.drawCircle(paddingLeft + j * blockWidth, paddingTop + i * blockHeight, pieceRadius, paint);
             }
+        }
+
+        // Draw the candidate.
+        if (isValidCoordinate(candidateR, candidateC)) {
+            paint.setColor(Color.BLUE);
+            canvas.drawCircle(paddingLeft + candidateC * blockWidth, paddingTop + candidateR * blockHeight, pieceRadius, paint);
         }
 
     }
 
+    public boolean isValidCoordinate(int i, int j) {
+        return i >= 0 && i < row && j >= 0 && j < col;
+    }
+
     public void setPiece(int i, int j, Piece piece) {
         board[i][j] = piece;
-        this.postInvalidate();
+        postInvalidate();
+    }
+
+    public void removePiece(int i, int j) {
+        setPiece(i, j, null);
+    }
+
+    public void setCandidate(int i, int j) {
+        candidateR = i;
+        candidateC = j;
+        postInvalidate();
+    }
+
+    public void calculateCandidateCoordinate(int x, int y) {
+        // Fix coordinate.
+        x += blockWidth / 2 - paddingLeft;
+        y += blockHeight / 2 - paddingTop;
+        // Prune.
+        setCandidate(
+                Math.min(Math.max(y / blockHeight, 0), row - 1),
+                Math.min(Math.max(x / blockWidth, 0), col - 1)
+        );
+    }
+
+    public void clearCandidate() {
+        setCandidate(-1, -1);
     }
 
 }

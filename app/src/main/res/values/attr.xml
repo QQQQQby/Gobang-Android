@@ -6,6 +6,6 @@
         <attr name="block_width" format="integer"/>
         <attr name="block_height" format="integer" />
         <attr name="line_width" format="integer" />
-        <attr name="piece_size" format="integer"/>
+        <attr name="piece_radius" format="integer"/>
     </declare-styleable>
 </resources>
