@@ -17,10 +17,9 @@ import com.example.gobang.model.Piece;
 
 public class ChessBoardView extends View implements View.OnTouchListener {
 
-    private static final int DEFAULT_BLOCK_WIDTH = 50, DEFAULT_BLOCK_HEIGHT = 50;
-    private static final int DEFAULT_PIECE_SIZE = 20;
     private static final int DEFAULT_ROW = 15, DEFAULT_COLUMN = 15;
-    private static final int DEFAULT_LINE_WIDTH = 5;
+    private static final int DEFAULT_BLOCK_WIDTH = 60, DEFAULT_BLOCK_HEIGHT = 60;
+    private static final int DEFAULT_PIECE_SIZE = 25, DEFAULT_LINE_WIDTH = 5;
 
     private final Paint paint;
     private final int blockWidth, blockHeight;
@@ -30,6 +29,7 @@ public class ChessBoardView extends View implements View.OnTouchListener {
     private final int paddingLeft, paddingRight, paddingTop, paddingBottom;
     private int candidateC, candidateR;
     Piece[][] board;
+    private Piece currentPiece;
 
     public ChessBoardView(Context context) {
         this(context, null, 0);
@@ -59,7 +59,9 @@ public class ChessBoardView extends View implements View.OnTouchListener {
 
         paint = new Paint();
         board = new Piece[row][col];
-        candidateC = candidateR = -1;
+
+        clearCandidate();
+        setCurrentPiece(Piece.BLACK);
 
         setOnTouchListener(this);
     }
@@ -76,13 +78,17 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_UP:
                 Log.d("haha", "UP");
+                //
+                if (isValidCoordinate(candidateR, candidateC))
+                    setPiece(candidateR, candidateC, currentPiece);
+                clearCandidate();
+                break;
             case MotionEvent.ACTION_DOWN:
-                Log.d("haha", "DOWN");
+            case MotionEvent.ACTION_MOVE:
+                Log.d("haha", "MOVE");
+                setCandidateOnTouch(x, y);
+                break;
         }
-//        if (x < 0 || y < 0 || x >= width || y >= height)
-//            return true;
-//        Log.d("haha", x + "," + y);
-        calculateCandidateCoordinate(x, y);
         return true;
     }
 
@@ -149,19 +155,23 @@ public class ChessBoardView extends View implements View.OnTouchListener {
         postInvalidate();
     }
 
-    public void calculateCandidateCoordinate(int x, int y) {
+    public void setCandidateOnTouch(int x, int y) {
         // Fix coordinate.
         x += blockWidth / 2 - paddingLeft;
         y += blockHeight / 2 - paddingTop;
         // Prune.
-        setCandidate(
-                Math.min(Math.max(y / blockHeight, 0), row - 1),
-                Math.min(Math.max(x / blockWidth, 0), col - 1)
-        );
+        int r = Math.min(Math.max(y / blockHeight, 0), row - 1);
+        int c = Math.min(Math.max(x / blockWidth, 0), col - 1);
+        if (board[r][c] == null)
+            setCandidate(r, c);
     }
 
     public void clearCandidate() {
         setCandidate(-1, -1);
+    }
+
+    public void setCurrentPiece(Piece currentPiece) {
+        this.currentPiece = currentPiece;
     }
 
 }

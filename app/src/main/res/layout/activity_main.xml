@@ -13,8 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorChessBoard"
-        android:padding="20dp"
-        app:row="10"
-        app:col="10"/>
+        android:padding="20dp"/>
 
 </LinearLayout>
