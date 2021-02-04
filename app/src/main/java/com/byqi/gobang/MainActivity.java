@@ -1,10 +1,10 @@
-package com.example.gobang;
+package com.byqi.gobang;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.gobang.view.ChessBoardView;
+import com.byqi.gobang.view.ChessBoardView;
 
 public class MainActivity extends AppCompatActivity {
 

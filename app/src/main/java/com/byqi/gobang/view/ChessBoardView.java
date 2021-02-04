@@ -1,4 +1,4 @@
-package com.example.gobang.view;
+package com.byqi.gobang.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,8 +12,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.example.gobang.R;
-import com.example.gobang.model.Piece;
+import com.byqi.gobang.R;
+import com.byqi.gobang.model.Piece;
 
 public class ChessBoardView extends View implements View.OnTouchListener {
 

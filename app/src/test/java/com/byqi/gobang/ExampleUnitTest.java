@@ -1,4 +1,4 @@
-package com.example.gobang;
+package com.byqi.gobang;
 
 import org.junit.Test;
 

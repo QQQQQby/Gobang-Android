@@ -1,4 +1,4 @@
-package com.example.gobang.model;
+package com.byqi.gobang.model;
 
 public enum Piece {
     BLACK,
